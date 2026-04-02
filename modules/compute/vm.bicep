@@ -3,7 +3,7 @@ param vm object
 param identity object
 param nicId string
 
-resource dataDisk 'Microsoft.Compute/disks@2023-09-01' = {
+resource dataDisk 'Microsoft.Compute/disks@2021-12-01' = {
   name: vm.disks.data[0].name
   location: location
   sku: {
@@ -17,7 +17,7 @@ resource dataDisk 'Microsoft.Compute/disks@2023-09-01' = {
   }
 }
 
-resource vmResource 'Microsoft.Compute/virtualMachines@2023-09-01' = {
+resource vmResource 'Microsoft.Compute/virtualMachines@2022-03-01' = {
   name: vm.name
   location: location
   properties: {
