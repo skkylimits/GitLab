@@ -1,22 +1,33 @@
 param location string
-param vmName string
-param adminUsername string
-@secure()
-param adminPassword string
+param vm object
+param identity object
 param nicId string
-param vmSize string = 'Standard_B2s'
 
-resource vm 'Microsoft.Compute/virtualMachines@2023-09-01' = {
-  name: vmName
+resource dataDisk 'Microsoft.Compute/disks@2023-09-01' = {
+  name: vm.disks.data[0].name
+  location: location
+  sku: {
+    name: vm.disks.data[0].sku
+  }
+  properties: {
+    creationData: {
+      createOption: 'Empty'
+    }
+    diskSizeGB:  vm.disks.data[0].sizeGB
+  }
+}
+
+resource vmResource 'Microsoft.Compute/virtualMachines@2023-09-01' = {
+  name: vm.name
   location: location
   properties: {
     hardwareProfile: {
-      vmSize: vmSize
+      vmSize: vm.size
     }
     osProfile: {
-      computerName: vmName
-      adminUsername: adminUsername
-      adminPassword: adminPassword
+      computerName: vm.name
+      adminUsername: identity.adminUsername
+      adminPassword: identity.adminPassword
     }
     storageProfile: {
       imageReference: {
@@ -27,7 +38,18 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-09-01' = {
       }
       osDisk: {
         createOption: 'FromImage'
+        diskSizeGB: vm.disks.os.sizeGB
       }
+      dataDisks: [
+        {
+          lun: 0
+          createOption: 'Attach'
+          managedDisk: {
+            id: dataDisk.id
+          }
+          diskSizeGB: vm.disks.data[0].sizeGB
+        }
+      ]
     }
     networkProfile: {
       networkInterfaces: [
@@ -38,3 +60,6 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-09-01' = {
     }
   }
 }
+
+output vmId string = vmResource.id
+output dataDiskId string = dataDisk.id

@@ -5,38 +5,34 @@ param location string
 param network object
 param compute object
 param identity object
-@secure()
-param secrets object
 
 
 // 🏗 MODULES
 
 // VNET module
 module vnet './modules/network/vnet.bicep' = {
-  name: 'vnetDeploy'
+  name: network.vnet.module
   params: {
     location: location
-    name: network.vnet.name
-    addressPrefix: network.vnet.addressPrefix
-    subnetPrefix: network.subnet.prefix
+    vnet: network.vnet
   }
 }
 
 // NSG module
 module nsg './modules/network/nsg.bicep' = {
-  name: 'nsgDeploy'
+  name: network.nsg.module
   params: {
     location: location
-    name: network.nsg.name
+    nsg: network.nsg
   }
 }
 
 // NIC module
 module nic './modules/network/nic.bicep' = {
-  name: 'nicDeploy'
+  name: network.nic.module
   params: {
     location: location
-    nicName: network.nic.name
+    nic: network.nic
     subnetId: vnet.outputs.subnetId
     nsgId: nsg.outputs.nsgId
   }
@@ -44,15 +40,15 @@ module nic './modules/network/nic.bicep' = {
 
 // VM module
 module vm './modules/compute/vm.bicep' = {
-  name: 'vmDeploy'
+  name: network.vm.module
   params: {
     location: location
-    vmName: compute.vm.name
-    adminUsername: identity.adminUsername
-    adminPassword: secrets.adminPassword
+    vm: compute.vm
+    identity: identity
     nicId: nic.outputs.nicId
   }
 }
 
 // 🌐 OUTPUTS
-output publicIp string = nic.outputs.publicIp
+output vmId string = vm.outputs.vmId
+output nicId string = nic.outputs.nicId

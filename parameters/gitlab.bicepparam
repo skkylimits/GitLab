@@ -5,38 +5,52 @@ param location = 'westeurope'
 param rg = {
   name: 'RG-GitLab'
   tags: {
-    environment: 'gitlab'
-  }
-}
-
-param network = {
-  vnet: {
-    name: 'VNET-GitLab'
-    addressPrefix: '10.0.0.0/16'
-  }
-  subnet: {
-    name: 'SUBNET-GitLab'
-    prefix: '10.0.0.0/24'
-  }
-  nsg: {
-    name: 'NSG-GitLab'
-  }
-  nic: {
-    name: 'NIC-GitLab'
+    environment: 'GitLab'
   }
 }
 
 param compute = {
   vm: {
-    name: 'VM-GitLab'
-    size: 'Standard_B2s'
+    name: 'gitlab-vm'
+    size: 'Standard_DS2_v2'
+    disks: {
+      os: {
+        name: 'OSDISK-GitLab'
+        sizeGB: 30
+      }
+      data: [
+        {
+          name: 'DATA-GitLab'
+          sizeGB: 128
+          sku: 'Premium_LRS'
+        }
+      ]
+    }
   }
 }
 
 param identity = {
-  adminUsername: 'aazsp3'
+  adminUsername: 'ubuntu'
+  adminPassword: 'Pa$$w0rd123!'
 }
 
-param secrets = {
-  adminPassword: 'Pa$$w0rd123!'
+param network = {
+  vnet: {
+    module: 'MOD-vnet' 
+    name: 'VNET-GitLab'
+    addressPrefix: '10.0.0.0/16'
+  }
+  subnet: {
+    module: 'MOD-vnet' 
+    name: 'SUBNET-GitLab'
+    prefix: '10.0.0.0/24'
+  }
+  nsg: {
+    module: 'MOD-vnet' 
+    name: 'NSG-GitLab'
+  }
+  nic: {
+    module: 'MOD-nic'
+    name: 'NIC-GitLab'
+  }
 }

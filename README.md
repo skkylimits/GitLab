@@ -16,6 +16,14 @@ az deployment sub create `
 - Deployt de applicatie-stack via module `app` in scope `resourceGroup(rg.name)`.
 - Hierdoor is 1 commando voldoende om op te starten en te updaten.
 
+## 1.5 GitLab host requirements (recommended)
+- VM-size: `Standard_DS2_v2` (min 4 vCPU, 8 GB RAM)
+- OS: Ubuntu 22.04 LTS
+- OS disk: 30 GB
+- Datadisk: 128 GB Premium SSD
+- Geen publieke IP (private netwerk + bastion/jumpbox voor beheer)
+- Eenvoudig te updaten met: `az deployment sub create ...` (idempotent)
+
 ## 2. ResourceGroup + module hiërarchie
 - `bootstrap.bicep` creëert RG.
 - `main.bicep` draait per RG (`targetScope = 'resourceGroup'`).

@@ -1,26 +1,12 @@
 param location string
-param name string
+param nsg object
 
-resource nsg 'Microsoft.Network/networkSecurityGroups@2023-09-01' = {
-  name: name
+resource nsgResource 'Microsoft.Network/networkSecurityGroups@2023-09-01' = {
+  name: nsg.name
   location: location
   properties: {
-    securityRules: [
-      {
-        name: 'Allow-SSH'
-        properties: {
-          priority: 1000
-          access: 'Allow'
-          direction: 'Inbound'
-          protocol: 'Tcp'
-          sourcePortRange: '*'
-          destinationPortRange: '22'
-          sourceAddressPrefix: '*'
-          destinationAddressPrefix: '*'
-        }
-      }
-    ]
+    securityRules: nsg.securityRules
   }
 }
 
-output nsgId string = nsg.id
+output nsgId string = nsgResource.id

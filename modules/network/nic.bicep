@@ -1,21 +1,10 @@
 param location string
-param nicName string
+param nic object
 param subnetId string
 param nsgId string
 
-resource publicIp 'Microsoft.Network/publicIPAddresses@2023-09-01' = {
-  name: '${nicName}-pip'
-  location: location
-  sku: {
-    name: 'Basic'
-  }
-  properties: {
-    publicIPAllocationMethod: 'Dynamic'
-  }
-}
-
-resource nic 'Microsoft.Network/networkInterfaces@2023-09-01' = {
-  name: nicName
+resource nicResource 'Microsoft.Network/networkInterfaces@2023-09-01' = {
+  name: nic.name
   location: location
   properties: {
     networkSecurityGroup: {
@@ -29,14 +18,10 @@ resource nic 'Microsoft.Network/networkInterfaces@2023-09-01' = {
             id: subnetId
           }
           privateIPAllocationMethod: 'Dynamic'
-          publicIPAddress: {
-            id: publicIp.id
-          }
         }
       }
     ]
   }
 }
 
-output nicId string = nic.id
-output publicIp string = publicIp.properties.ipAddress
+output nicId string = nicResource.id

@@ -1,20 +1,18 @@
 param location string
-param name string
-param addressPrefix string
-param subnetPrefix string
+param vnet object
 
-resource vnet 'Microsoft.Network/virtualNetworks@2023-09-01' = {
-  name: name
+resource vnetResource 'Microsoft.Network/virtualNetworks@2023-09-01' = {
+  name: vnet.name
   location: location
   properties: {
     addressSpace: {
-      addressPrefixes: [addressPrefix]
+      addressPrefixes: [vnet.addressPrefix]
     }
     subnets: [
       {
-        name: '${name}-subnet'
+        name: vnet.subnet.name
         properties: {
-          addressPrefix: subnetPrefix
+          addressPrefix: vnet.subnet.prefix
         }
       }
     ]
@@ -22,12 +20,12 @@ resource vnet 'Microsoft.Network/virtualNetworks@2023-09-01' = {
 }
 
 resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-09-01' = {
-  parent: vnet
-  name: '${name}-subnet'
+  parent: vnetResource
+  name: vnet.subnet.name
   properties: {
-    addressPrefix: subnetPrefix
+    addressPrefix: vnet.subnet.prefix
   }
 }
 
-output vnetId string = vnet.id
+output vnetId string = vnetResource.id
 output subnetId string = subnet.id
