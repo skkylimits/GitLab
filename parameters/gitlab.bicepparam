@@ -1,6 +1,14 @@
-using '../main.bicep'
+using '../bootstrap.bicep'
 
 param location = 'westeurope'
+
+param rg = {
+  name: 'RG-GitLab'
+  tags: {
+    environment: 'gitlab'
+  }
+}
+
 param network = {
   vnet: {
     name: 'VNET-GitLab'
