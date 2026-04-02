@@ -2,10 +2,10 @@
 
 ```powershell
 az deployment sub create `
-  --name GitLab `
+  --name GitLab
   --location westeurope `
   --template-file bootstrap.bicep `
-  --parameters @parameters/gitlab.bicepparam
+  --parameters parameters\gitlab.bicepparam
 ```
 
 # Architectuur en keuzes

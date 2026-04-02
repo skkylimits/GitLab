@@ -5,6 +5,7 @@ param rg object
 param network object
 param compute object
 param identity object
+param secrets object = {}
 
 resource RG 'Microsoft.Resources/resourceGroups@2025-04-01' = {
   name: rg.name
@@ -20,6 +21,7 @@ module app './main.bicep' = {
     network: network
     compute: compute
     identity: identity
+    secrets: secrets
   }
 }
 

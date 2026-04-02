@@ -11,6 +11,7 @@ param rg = {
 
 param compute = {
   vm: {
+    module: 'MOD-vm'
     name: 'gitlab-vm'
     size: 'Standard_DS2_v2'
     disks: {
@@ -39,14 +40,13 @@ param network = {
     module: 'MOD-vnet' 
     name: 'VNET-GitLab'
     addressPrefix: '10.0.0.0/16'
-  }
-  subnet: {
-    module: 'MOD-vnet' 
-    name: 'SUBNET-GitLab'
-    prefix: '10.0.0.0/24'
+    subnet: {
+      name: 'SUBNET-GitLab'
+      prefix: '10.0.0.0/24'
+    }
   }
   nsg: {
-    module: 'MOD-vnet' 
+    module: 'MOD-nsg' 
     name: 'NSG-GitLab'
   }
   nic: {

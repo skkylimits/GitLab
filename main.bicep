@@ -5,7 +5,12 @@ param location string
 param network object
 param compute object
 param identity object
+param secrets object = {}
 
+var identityEffective = {
+  adminUsername: identity.adminUsername
+  adminPassword: identity.adminPassword ?? secrets.adminPassword
+}
 
 // 🏗 MODULES
 
@@ -40,11 +45,11 @@ module nic './modules/network/nic.bicep' = {
 
 // VM module
 module vm './modules/compute/vm.bicep' = {
-  name: network.vm.module
+  name: compute.vm.module
   params: {
     location: location
     vm: compute.vm
-    identity: identity
+    identity: identityEffective
     nicId: nic.outputs.nicId
   }
 }
