@@ -12,8 +12,8 @@ param rg = {
 param compute = {
   vm: {
     module: 'MOD-vm'
-    name: 'gitlab-vm'
-    size: 'Standard_DS2_v2'
+    name: 'VM-GitLab'
+    size: 'Standard_D2s_v5'
     disks: {
       os: {
         name: 'OSDISK-GitLab'
@@ -48,6 +48,47 @@ param network = {
   nsg: {
     module: 'MOD-nsg' 
     name: 'NSG-GitLab'
+    securityRules: [
+      {
+        name: 'Allow-SSH-22'
+        properties: {
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          destinationPortRange: '22'
+          sourceAddressPrefix: '*'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 100
+          direction: 'Inbound'
+        }
+      }
+      {
+        name: 'Allow-HTTP-80'
+        properties: {
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          destinationPortRange: '80'
+          sourceAddressPrefix: '*'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 110
+          direction: 'Inbound'
+        }
+      }
+      {
+        name: 'Allow-HTTPS-443'
+        properties: {
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          destinationPortRange: '443'
+          sourceAddressPrefix: '*'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 120
+          direction: 'Inbound'
+        }
+      }
+    ]
   }
   nic: {
     module: 'MOD-nic'
