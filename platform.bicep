@@ -2,28 +2,26 @@ targetScope = 'subscription'
 
 param location string
 param rg object
+
 param network object
 param compute object
 param identity object
-param secrets object = {}
 
-resource RG 'Microsoft.Resources/resourceGroups@2025-04-01' = {
+// 📦 Resource Group
+resource resourceGroup 'Microsoft.Resources/resourceGroups@2022-09-01' = {
   name: rg.name
   location: location
-  tags: rg.tags ?? {}
+  tags: rg.tags
 }
 
+// 🚀 Deploy jouw bestaande main.bicep
 module app './main.bicep' = {
-  name: 'GitLab'
-  scope: resourceGroup(rg.name)
+  name: 'app-deployment'
+  scope: resourceGroup
   params: {
     location: location
     network: network
     compute: compute
     identity: identity
-    secrets: secrets
   }
 }
-
-output vmId string = app.outputs.vmId
-output nicId string = app.outputs.nicId

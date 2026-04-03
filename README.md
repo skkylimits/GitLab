@@ -2,11 +2,22 @@
 
 ```powershell
 az deployment sub create `
-  --name GitLab
+  --name GitLab `
   --location westeurope `
   --template-file bootstrap.bicep `
   --parameters parameters\gitlab.bicepparam
 ```
+
+```
+az stack sub create `
+  --name "gitlab-stack" `
+  --location "westeurope" `
+  --template-file platform.bicep `
+  --parameters parameters\gitlab.bicepparam `
+  --action-on-unmanage deleteResources `
+  --deny-settings-mode denyWriteAndDelete
+```
+
 
 # Architectuur en keuzes
 
