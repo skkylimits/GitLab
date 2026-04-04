@@ -364,3 +364,44 @@ Als je wil, kan ik je volgende stap laten zien:
 * oude resources automatisch verdwijnen
 
 Dat is waar dit echt 🔥 wordt.
+
+
+Ja. Als de stack al bestaat en je gebruikt exact dezelfde naam `gitlab-stack`, dan werkt dit commando als create of update:
+
+```powershell
+az stack sub create `
+  --name "gitlab-stack" `
+  --location "westeurope" `
+  --template-file platform.bicep `
+  --parameters parameters\gitlab.bicepparam `
+  --action-on-unmanage deleteResources `
+  --deny-settings-mode denyWriteAndDelete
+```
+
+Dus praktisch:
+- bestaat de stack nog niet: Azure maakt hem aan
+- bestaat de stack al wel: Azure werkt hem bij
+- wijzigingen in je Bicep of `.bicepparam` worden toegepast
+- resources die niet meer in de stack zitten, worden verwijderd omdat je `--action-on-unmanage deleteResources` gebruikt
+
+De enige harde voorwaarden zijn:
+- dezelfde stacknaam blijven gebruiken
+- dezelfde scope gebruiken, hier subscription-scope via `az stack sub`
+- geen conflicterende locks of tweede stack over dezelfde resources heen proberen te zetten
+
+Eén nuance: als een property niet in-place wijzigbaar is in Azure, dan kan een update alsnog mislukken of een resource replacement vereisen. Maar als algemene deployment/update-flow: ja, dit is nu je normale commando.
+
+Voor minder rommelige foutmeldingen zou ik zelf deze variant blijven gebruiken:
+
+```powershell
+az stack sub create `
+  --name "gitlab-stack" `
+  --location "westeurope" `
+  --template-file platform.bicep `
+  --parameters parameters\gitlab.bicepparam `
+  --action-on-unmanage deleteResources `
+  --deny-settings-mode denyWriteAndDelete `
+  --only-show-errors
+```
+
+Als je wilt, kan ik je README nog even opschonen tot één strakke `deploy / unlock / delete` sectie zonder dubbelingen.

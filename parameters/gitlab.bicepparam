@@ -16,8 +16,8 @@ param compute = {
     size: 'Standard_D2s_v5'
     disks: {
       os: {
-        name: 'OSDISK-GitLab'
-        sizeGB: 30
+        name: 'OS-GitLab'
+        sizeGB: 64
       }
       data: [
         {

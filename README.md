@@ -30,6 +30,16 @@ az stack sub delete `
   --yes
 ```
 
+```
+az stack sub show `
+  --name "gitlab-stack"
+```
+
+```
+az group exists `
+  --name "RG-GitLab"
+```
+
 # Debugger
 
 ```

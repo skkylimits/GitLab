@@ -37,19 +37,23 @@ resource VirtualMachine 'Microsoft.Compute/virtualMachines@2022-03-01' = {
         version: 'latest'
       }
       osDisk: {
-        createOption: 'FromImage'
-        diskSizeGB: vm.disks.os.sizeGB
+      name: vm.disks.os.name
+      createOption: 'FromImage'
+      diskSizeGB: vm.disks.os.sizeGB
+      managedDisk: {
+        storageAccountType: 'StandardSSD_LRS'
       }
+    }
       dataDisks: [
-        {
-          lun: 0
-          createOption: 'Attach'
-          managedDisk: {
-            id: dataDisk.id
-          }
-          diskSizeGB: vm.disks.data[0].sizeGB
+  {
+    lun: 0
+        createOption: 'Attach'
+        managedDisk: {
+          id: dataDisk.id
         }
-      ]
+        caching: 'ReadWrite'
+      }
+    ]
     }
     networkProfile: {
       networkInterfaces: [
