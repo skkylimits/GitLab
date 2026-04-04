@@ -45,6 +45,16 @@ param network = {
       prefix: '10.0.0.0/24'
     }
   }
+    nic: {
+    module: 'MOD-nic'
+    name: 'NIC-GitLab'
+    ipConfigurations: [
+      {
+        name: 'primary'
+        privateIPAllocationMethod: 'Dynamic'
+      }
+    ]
+  }
   nsg: {
     module: 'MOD-nsg' 
     name: 'NSG-GitLab'
@@ -89,9 +99,5 @@ param network = {
         }
       }
     ]
-  }
-  nic: {
-    module: 'MOD-nic'
-    name: 'NIC-GitLab'
   }
 }

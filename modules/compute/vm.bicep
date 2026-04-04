@@ -17,7 +17,7 @@ resource dataDisk 'Microsoft.Compute/disks@2021-12-01' = {
   }
 }
 
-resource vmResource 'Microsoft.Compute/virtualMachines@2022-03-01' = {
+resource VirtualMachine 'Microsoft.Compute/virtualMachines@2022-03-01' = {
   name: vm.name
   location: location
   properties: {
@@ -61,5 +61,5 @@ resource vmResource 'Microsoft.Compute/virtualMachines@2022-03-01' = {
   }
 }
 
-output vmId string = vmResource.id
+output vmId string = VirtualMachine.id
 output dataDiskId string = dataDisk.id

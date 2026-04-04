@@ -1,13 +1,5 @@
 # Deployment
 
-```powershell
-az deployment sub create `
-  --name GitLab `
-  --location westeurope `
-  --template-file bootstrap.bicep `
-  --parameters parameters\gitlab.bicepparam
-```
-
 ```
 az stack sub create `
   --name "gitlab-stack" `
@@ -18,10 +10,121 @@ az stack sub create `
   --deny-settings-mode denyWriteAndDelete
 ```
 
+# Verwijder stack lock
+
+az stack sub create `
+  --name "gitlab-stack" `
+  --location westeurope `
+  --template-file platform.bicep `
+  --parameters parameters\gitlab.bicepparam `
+  --action-on-unmanage deleteResources `
+  --deny-settings-mode none `
+  --yes
+
+# Delete
+
+```
+az stack sub delete `
+  --name "gitlab-stack" `
+  --action-on-unmanage deleteResources `
+  --yes
+```
+
+# Debugger
+
+```
+az stack sub create `
+  --name "gitlab-stack" `
+  --location "westeurope" `
+  --template-file platform.bicep `
+  --parameters parameters\gitlab.bicepparam `
+  --action-on-unmanage deleteResources `
+  --deny-settings-mode denyWriteAndDelete --only-show-errors `
+```
+
+## 🔹 Wat doet een Deployment Stack?
+
+```bash
+az stack sub create \
+  --name gitlab-stack \
+  ...
+  --action-on-unmanage deleteResources \
+  --deny-settings-mode none
+```
+
+👉 Dit gebeurt:
+
+* Azure maakt een **Deployment Stack**
+* Die **beheert jouw resources** (RG, VM, netwerk, etc.)
+
+---
+
+## 🔹 Wat kan die stack doen?
+
+Afhankelijk van je settings:
+
+* 🔒 resources **beschermen** (locks)
+* 🧹 resources **automatisch verwijderen** (als je ze uit Bicep haalt)
+
+---
+
+👉 Zie het als:
+
+> “Azure houdt bij wat van jou is en zorgt dat het klopt met je code”
+
+### 🧪 Lab
+
+```bash
+--deny-settings-mode none
+```
+
+* ✅ alles zelf verwijderen (RG, VM, etc.)
+* ❌ geen bescherming
+  👉 snel testen / slopen
+
+---
+
+### 🏭 Productie
+
+```bash
+--deny-settings-mode denyDelete
+```
+
+* ❌ je kan resources niet zomaar deleten
+* ✅ bescherming tegen fouten
+  👉 veilig
+
+---
+
+## 🔹 Belangrijk verschil
+
+* `none` → jij hebt controle
+* `denyDelete` → Azure beschermt je
+
+---
+
+## 🔹 Die andere setting (belangrijk!)
+
+```bash
+--action-on-unmanage deleteResources
+```
+
+👉 betekent:
+
+* haal je iets uit Bicep → wordt automatisch verwijderd
+
+---
+
+## 🔥 TL;DR
+
+* Lab → `none` (vrijheid)
+* Prod → `denyDelete` (veiligheid)
+* Best practice → **verwijderen via Bicep, niet handmatig**
+
 
 # Architectuur en keuzes
 
-## 1. Subscription-first bootstrapping (bootstrap.bicep)
+## 1. Subscription-first bootstrapping (platform.bicep)
 - `targetScope = 'subscription'`.
 - Maakt of hergebruikt resource group (`RG`) als container.
 - Deployt de applicatie-stack via module `app` in scope `resourceGroup(rg.name)`.
@@ -68,12 +171,23 @@ Subscription scope (bootstrap.bicep)
   - Eenvoudig testen per environment (dev/stage/prod) met aparte .bicepparam variants.
 
 ## 4. Idempotent deploy
-- `az deployment sub create` is safe om herhaald te runnen.
+- `az stack sub create` is safe om herhaald te runnen.
 - maakt RG als niet-bestaat
 - update state naar template-definitie
 - status is consistent na elke run
 
+## 4.5 Destroy / rebuild flow
+- Voor een volledige reset: verwijder eerst de stack met `az stack sub delete --name gitlab-stack --action-on-unmanage deleteResources --yes`.
+- Wacht tot de delete klaar is; de deny assignment wordt dan ook verwijderd.
+- Deploy daarna opnieuw met `az stack sub create ...`.
+- Wil je alleen locks uitzetten zonder te deleten, run dan opnieuw `az stack sub create ... --deny-settings-mode none`.
+
 ## 5. Waarom we niet `main.bicep` direct met RG t/m objecten
 - `main.bicep` is clean resourceGroup-scope en herbruikbaar vanuit meerdere RG’'s/branches.
-- `bootstrap.bicep` is orchestrator en biedt single entrypoint (1 command).
+- `platform.bicep` is orchestrator en biedt single entrypoint (1 command).
 - Dit scheidt verantwoordelijkheden voor onderhoud en multi-environment deployment.
+
+az vm list-skus `
+  --location westeurope `
+  --size Standard_B `
+  --output table

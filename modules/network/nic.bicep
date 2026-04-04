@@ -5,7 +5,7 @@ param nsgId string     // krijgt waarde van module nsg.outputs.nsgId
 
 // Let op: deze IDs komen niet rechtstreeks uit gitlab.bicepparam.
 // Ze zijn runtime IDs die uit de eerder deployde resources (vnet/nsg) worden doorgegeven.
-resource nicResource 'Microsoft.Network/networkInterfaces@2023-09-01' = {
+resource NetworkInterface 'Microsoft.Network/networkInterfaces@2023-09-01' = {
   name: nic.name
   location: location
   properties: {
@@ -13,17 +13,17 @@ resource nicResource 'Microsoft.Network/networkInterfaces@2023-09-01' = {
       id: nsgId
     }
     ipConfigurations: [
-      {
-        name: 'ipconfig1'
+      for ipConfiguration in nic.ipConfigurations: {
+        name: ipConfiguration.name
         properties: {
           subnet: {
             id: subnetId
           }
-          privateIPAllocationMethod: 'Dynamic'
+          privateIPAllocationMethod: ipConfiguration.privateIPAllocationMethod
         }
       }
     ]
   }
 }
 
-output nicId string = nicResource.id
+output nicId string = NetworkInterface.id

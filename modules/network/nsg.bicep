@@ -1,7 +1,7 @@
 param location string
 param nsg object
 
-resource nsgResource 'Microsoft.Network/networkSecurityGroups@2023-09-01' = {
+resource NetworkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2023-09-01' = {
   name: nsg.name
   location: location
   properties: {
@@ -9,4 +9,4 @@ resource nsgResource 'Microsoft.Network/networkSecurityGroups@2023-09-01' = {
   }
 }
 
-output nsgId string = nsgResource.id
+output nsgId string = NetworkSecurityGroup.id
