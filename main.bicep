@@ -1,3 +1,5 @@
+provider microsoftGraph
+
 targetScope = 'resourceGroup'
 
 // 🌍 Object-oriented params

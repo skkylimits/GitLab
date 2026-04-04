@@ -33,6 +33,7 @@ param compute = {
 param identity = {
   adminUsername: 'ubuntu'
   adminPassword: 'Pa$$w0rd123!'
+  sshPublicKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMdV4xTfs05XrPFK41vH4AVr2qInonVCrbxNnFcpnd+p entra-bootstrap'
 }
 
 param network = {

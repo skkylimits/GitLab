@@ -27,7 +27,18 @@ resource VirtualMachine 'Microsoft.Compute/virtualMachines@2022-03-01' = {
     osProfile: {
       computerName: vm.name
       adminUsername: identity.adminUsername
-      adminPassword: identity.adminPassword
+
+      linuxConfiguration: {
+        disablePasswordAuthentication: true
+        ssh: {
+          publicKeys: [
+            {
+              path: '/home/${identity.adminUsername}/.ssh/authorized_keys'
+              keyData: identity.sshPublicKey
+            }
+          ]
+        }
+      }
     }
     storageProfile: {
       imageReference: {
@@ -62,6 +73,18 @@ resource VirtualMachine 'Microsoft.Compute/virtualMachines@2022-03-01' = {
         }
       ]
     }
+  }
+}
+
+resource AADSSHLoginForLinux 'Microsoft.Compute/virtualMachines/extensions@2023-07-01' = {
+  name: 'AADSSHLoginForLinux'
+  parent: VirtualMachine
+  location: location
+  properties: {
+    publisher: 'Microsoft.Azure.ActiveDirectory'
+    type: 'AADSSHLoginForLinux'
+    typeHandlerVersion: '1.0'
+    autoUpgradeMinorVersion: true
   }
 }
 

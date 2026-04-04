@@ -1,3 +1,13 @@
+# pre
+
+```
+az cli
+```
+
+```
+Connect-MgGraph -Scopes "Group.ReadWrite.All","Directory.Read.All"
+```
+
 # Deployment
 
 ```
@@ -20,6 +30,13 @@ az stack sub create `
   --action-on-unmanage deleteResources `
   --deny-settings-mode none `
   --yes
+
+
+# show
+
+```
+az stack sub show --name gitlab-stack --query properties.outputs
+```
 
 # Delete
 
