@@ -265,3 +265,12 @@ Als je bij een stap vastloopt of je config wil checken — drop screenshot of va
 
 Als dit werkt → volgende stap wordt 🔥:
 👉 Entra SSH login + RBAC + zero trust access
+
+
+Demo
+Deploy the Gateway
+Give Admin Consent
+Create the P2S Connection
+Configure the Client
+Enable MFA
+Restrict VPN access to a group

@@ -76,7 +76,7 @@ param network = {
   vpn: {
     module: 'MOD-vpn'
     publicIp: {
-      name: 'PIP-GitLab-VPN'
+      name: 'VPN-PIP-GitLab'
       sku: {
         name: 'Standard'
       }
