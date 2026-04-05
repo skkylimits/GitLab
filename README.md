@@ -8,6 +8,10 @@ az cli
 Connect-MgGraph -Scopes "Group.ReadWrite.All","Directory.Read.All"
 ```
 
+```
+az extension add --name ssh
+```
+
 # Deployment
 
 ```
@@ -46,11 +50,15 @@ az stack sub delete `
   --action-on-unmanage deleteResources `
   --yes
 ```
-
 ```
 az stack sub show `
   --name "gitlab-stack"
 ```
+
+az deployment group create `
+  -g TestRG `
+  --template-file test.bicep `
+  --parameters displayName='GitLabAdmins' uniqueName='gitlab-admins' mailNickname='gitlabadmins'
 
 ```
 az group exists `

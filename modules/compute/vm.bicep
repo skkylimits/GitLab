@@ -20,6 +20,9 @@ resource dataDisk 'Microsoft.Compute/disks@2021-12-01' = {
 resource VirtualMachine 'Microsoft.Compute/virtualMachines@2022-03-01' = {
   name: vm.name
   location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     hardwareProfile: {
       vmSize: vm.size
@@ -54,8 +57,9 @@ resource VirtualMachine 'Microsoft.Compute/virtualMachines@2022-03-01' = {
       managedDisk: {
         storageAccountType: 'StandardSSD_LRS'
       }
+      deleteOption: 'Delete' // zo wordt OS-disk ook verwijderd bij stack delete
     }
-      dataDisks: [
+    dataDisks: [
   {
     lun: 0
         createOption: 'Attach'

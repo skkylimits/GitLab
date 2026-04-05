@@ -6,6 +6,7 @@ param rg object
 param network object
 param compute object
 param identity object
+param entra object
 
 // 📦 Resource Group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2022-09-01' = {
@@ -15,13 +16,14 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2022-09-01' = {
 }
 
 // 🚀 Deploy jouw bestaande main.bicep
-module app './main.bicep' = {
-  name: 'app-deployment'
+module GitLab './main.bicep' = {
+  name: 'GitLab'
   scope: resourceGroup
   params: {
     location: location
     network: network
     compute: compute
     identity: identity
+    entra: entra
   }
 }

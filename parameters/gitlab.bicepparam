@@ -36,6 +36,19 @@ param identity = {
   sshPublicKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMdV4xTfs05XrPFK41vH4AVr2qInonVCrbxNnFcpnd+p entra-bootstrap'
 }
 
+param entra = {
+  ssh: {
+    module: 'MOD-entra-ssh'
+    adminGroup: {
+      displayName: '[Azure] - GitLab R00T'
+      uniqueName: 'gitlab-r00t'
+      mailNickname: 'gitlab-r00t'
+      members: []
+      roleDefinitionId: '1c0163c0-47e6-4577-8991-ea5c82e286e4'
+    }
+  }
+}
+
 param network = {
   vnet: {
     module: 'MOD-vnet' 
@@ -45,8 +58,12 @@ param network = {
       name: 'SUBNET-GitLab'
       prefix: '10.0.0.0/24'
     }
+    gatewaySubnet: {
+      name: 'GatewaySubnet'
+      prefix: '10.0.255.0/27'
+    }
   }
-    nic: {
+  nic: {
     module: 'MOD-nic'
     name: 'NIC-GitLab'
     ipConfigurations: [
@@ -55,6 +72,48 @@ param network = {
         privateIPAllocationMethod: 'Dynamic'
       }
     ]
+  }
+  vpn: {
+    module: 'MOD-vpn'
+    publicIp: {
+      name: 'PIP-GitLab-VPN'
+      sku: {
+        name: 'Standard'
+      }
+      publicIPAllocationMethod: 'Static'
+    }
+    gateway: {
+      name: 'VNG-GitLab'
+      ipConfigurations: [
+        {
+          name: 'vnetGatewayConfig'
+          properties: {
+            privateIPAllocationMethod: 'Dynamic'
+          }
+        }
+      ]
+      gatewayType: 'Vpn'
+      vpnType: 'RouteBased'
+      enableBgp: false
+      activeActive: false
+      sku: {
+        name: 'VpnGw1'
+        tier: 'VpnGw1'
+      }
+      vpnClientConfiguration: {
+        vpnClientAddressPool: {
+          addressPrefixes: [
+            '172.16.201.0/24'
+          ]
+        }
+        vpnClientProtocols: [
+          'OpenVPN'
+        ]
+        radiusServers: []
+        vpnClientRevokedCertificates: []
+        vpnClientRootCertificates: []
+      }
+    }
   }
   nsg: {
     module: 'MOD-nsg' 

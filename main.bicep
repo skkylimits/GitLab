@@ -1,5 +1,3 @@
-provider microsoftGraph
-
 targetScope = 'resourceGroup'
 
 // 🌍 Object-oriented params
@@ -7,6 +5,7 @@ param location string
 param network object
 param compute object
 param identity object
+param entra object
 
 
 
@@ -41,6 +40,15 @@ module nic './modules/network/nic.bicep' = {
   }
 }
 
+module vpn './modules/network/vpn.bicep' = {
+  name: network.vpn.module
+  params: {
+    location: location
+    vpn: network.vpn
+    gatewaySubnetId: vnet.outputs.gatewaySubnetId
+  }
+}
+
 // VM module
 module vm './modules/compute/vm.bicep' = {
   name: compute.vm.module
@@ -52,6 +60,15 @@ module vm './modules/compute/vm.bicep' = {
   }
 }
 
+// module ssh './modules/security/entra-ssh.bicep' = {
+//   name: entra.ssh.module
+//   params: {
+//     vmName: compute.vm.name
+//     entra: entra
+//   }
+// }
+
 // 🌐 OUTPUTS
 output vmId string = vm.outputs.vmId
 output nicId string = nic.outputs.nicId
+output vpnGatewayId string = vpn.outputs.vngId
