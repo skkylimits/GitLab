@@ -73,48 +73,6 @@ param network = {
       }
     ]
   }
-  vpn: {
-    module: 'MOD-vpn'
-    publicIp: {
-      name: 'VPN-PIP-GitLab'
-      sku: {
-        name: 'Standard'
-      }
-      publicIPAllocationMethod: 'Static'
-    }
-    gateway: {
-      name: 'VNG-GitLab'
-      ipConfigurations: [
-        {
-          name: 'vnetGatewayConfig'
-          properties: {
-            privateIPAllocationMethod: 'Dynamic'
-          }
-        }
-      ]
-      gatewayType: 'Vpn'
-      vpnType: 'RouteBased'
-      enableBgp: false
-      activeActive: false
-      sku: {
-        name: 'VpnGw1'
-        tier: 'VpnGw1'
-      }
-      vpnClientConfiguration: {
-        vpnClientAddressPool: {
-          addressPrefixes: [
-            '172.16.201.0/24'
-          ]
-        }
-        vpnClientProtocols: [
-          'OpenVPN'
-        ]
-        radiusServers: []
-        vpnClientRevokedCertificates: []
-        vpnClientRootCertificates: []
-      }
-    }
-  }
   nsg: {
     module: 'MOD-nsg' 
     name: 'NSG-GitLab'

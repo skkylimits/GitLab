@@ -12,26 +12,12 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-09-01' = {
     }
     subnets: [
       {
-        name: vnet.subnet.name
-        properties: {
-          addressPrefix: vnet.subnet.prefix
-        }
-      }
-      {
         name: vnet.gatewaySubnet.name
         properties: {
           addressPrefix: vnet.gatewaySubnet.prefix
         }
       }
     ]
-  }
-}
-
-resource vnetSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-09-01' = {
-  parent: virtualNetwork
-  name: vnet.subnet.name
-  properties: {
-    addressPrefix: vnet.subnet.prefix
   }
 }
 
@@ -44,5 +30,4 @@ resource gatewaySubnet 'Microsoft.Network/virtualNetworks/subnets@2023-09-01' = 
 }
 
 output vnetId string = virtualNetwork.id
-output subnetId string = vnetSubnet.id
 output gatewaySubnetId string = gatewaySubnet.id

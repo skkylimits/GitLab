@@ -15,7 +15,6 @@ Later kun je `VNET-VPN` peeren met `VNET-GitLab`, maar dat is bewust geen onderd
 De stack beheert nu zelf:
 
 - `VNET-VPN`
-- `SUBNET-VPN`
 - `GatewaySubnet`
 - `VPN-PIP-VPN`
 - `VNG-VPN`
@@ -39,7 +38,6 @@ Pas in `parameters/azure-vpn-client.bicepparam` minimaal dit aan als nodig:
 - resource group naam
 - VNet naam
 - VNet address space
-- workload subnet prefix
 - `GatewaySubnet` prefix
 - VPN client address pool
 - gateway SKU

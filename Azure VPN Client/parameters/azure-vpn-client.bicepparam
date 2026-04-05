@@ -14,10 +14,6 @@ param network = {
   vnet: {
     name: 'VNET-VPN'
     addressPrefix: '10.10.0.0/16'
-    subnet: {
-      name: 'SUBNET-VPN'
-      prefix: '10.10.0.0/24'
-    }
     gatewaySubnet: {
       name: 'GatewaySubnet'
       prefix: '10.10.255.0/27'
