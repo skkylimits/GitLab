@@ -191,9 +191,14 @@ Subscription scope (bootstrap.bicep)
 |       |-- nsg module (nsg.bicep)
 |       |-- nic module (nic.bicep)
 |       |-- vm module (vm.bicep)
-|
 |-- other potential RG modules...
 ```
+
+## Netwerkrol
+
+- `GitLab` is een spoke-workload VNet
+- de VPN Gateway hoort in de aparte `Azure VPN Client` hub-stack
+- on-premises of P2S/VPN-toegang naar GitLab loopt via VNet peering en remote gateway gebruik
 
 ## 3. Modulaire params & object model
 - Params in `parameters/gitlab.bicepparam`:

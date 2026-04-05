@@ -8,12 +8,12 @@ param allowForwardedTraffic bool = false
 param allowGatewayTransit bool = false
 param useRemoteGateways bool = false
 
-resource localVnet 'Microsoft.Network/virtualNetworks@2023-09-01' existing = {
+resource VirtualNetwork 'Microsoft.Network/virtualNetworks@2023-09-01' existing = {
   name: localVnetName
 }
 
-resource peering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-09-01' = {
-  parent: localVnet
+resource virtualNetworkPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-09-01' = {
+  parent: VirtualNetwork
   name: peeringName
   properties: {
     allowVirtualNetworkAccess: allowVirtualNetworkAccess
@@ -26,4 +26,4 @@ resource peering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-
   }
 }
 
-output peeringId string = peering.id
+output peeringId string = virtualNetworkPeering.id

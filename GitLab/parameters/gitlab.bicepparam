@@ -58,10 +58,6 @@ param network = {
       name: 'SUBNET-GitLab'
       prefix: '10.0.0.0/24'
     }
-    gatewaySubnet: {
-      name: 'GatewaySubnet'
-      prefix: '10.0.255.0/27'
-    }
   }
   nic: {
     module: 'MOD-nic'

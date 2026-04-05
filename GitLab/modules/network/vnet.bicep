@@ -15,12 +15,6 @@ resource VirtualNetwork 'Microsoft.Network/virtualNetworks@2023-09-01' = {
           addressPrefix: vnet.subnet.prefix
         }
       }
-      {
-        name: vnet.gatewaySubnet.name
-        properties: {
-          addressPrefix: vnet.gatewaySubnet.prefix
-        }
-      }
     ]
   }
 }
