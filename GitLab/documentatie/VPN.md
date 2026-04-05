@@ -269,8 +269,26 @@ Als dit werkt → volgende stap wordt 🔥:
 
 Demo
 Deploy the Gateway
-Give Admin Consent
+Give Admin Consent - 
 Create the P2S Connection
 Configure the Client
 Enable MFA
 Restrict VPN access to a group
+
+
+https://login.microsoftonline.com/common/reprocess?ctx=rQQIABAAIAEqAzEuMTokNDFiMjNlNjEtNmMxZS00NTQ1LWIzNjctY2QwNTRlMGVkNGI0chIKEMAyZt5JvLBCgREKNA2qoGS4AQHQAQHoAQGqAgQxMjM02gIPT0F1dGgyQXV0aG9yaXpl6gINYWRtaW5fY29uc2VudLIDBmNvbW1vbtgDAdAEAeoEDDADOggIChAAGAAgAPgEAaIFEgoQjvJ8BnrctECWHkTbCkgYAMoFL1I0MDUvV1FjNDMzUTc5bTZLcmdaRXZwcW1FdFdWdVNuNVFKWW03THlURm89MjoxkAYB8AYBiAcAugkYaHR0cHM6Ly9wb3J0YWwuYXp1cmUuY29twA0A-A7p7JyRqOGk70jqDyxuWDhBdE96ZGx2dUZFTENmYlVwZXc4M1RhYnd6SndSNEY4T0Uzdm9jRmw0PbAQAOAQAOARAPgREIgSAA2&sessionid=003d861a-8053-55db-a149-474b6df4dc4f
+
+https://www.youtube.com/watch?v=Ur0WNjnXJrU
+
+az ssh vm `
+  --resource-group RG-GitLab `
+  --name VM-GitLab `
+  --login-type aad `
+  --prefer-private-ip
+
+
+  az vm extension show `
+    --resource-group RG-GitLab`
+    --vm-name VM-GitLab `
+    --name AADSSHLoginForLinux `
+    -o json

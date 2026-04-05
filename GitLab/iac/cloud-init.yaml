@@ -1,0 +1,14 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+runcmd:
+  # 1. Partitie maken
+  - parted /dev/sdb --script mklabel gpt
+  - parted /dev/sdb --script mkpart primary ext4 0% 100%
+  # 2. Filesystem maken
+  - mkfs.ext4 /dev/sdb1
+  # 3. Mountpoint maken en mounten
+  - mkdir -p /mnt/gitlab_data
+  - mount /dev/sdb1 /mnt/gitlab_data
+  # 4. Automount bij reboot
+  - echo '/dev/sdb1 /mnt/gitlab_data ext4 defaults 0 2' >> /etc/fstab
