@@ -36,19 +36,6 @@ param identity = {
   sshPublicKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMdV4xTfs05XrPFK41vH4AVr2qInonVCrbxNnFcpnd+p entra-bootstrap'
 }
 
-param entra = {
-  ssh: {
-    module: 'MOD-entra-ssh'
-    adminGroup: {
-      displayName: '[Azure] - GitLab R00T'
-      uniqueName: 'gitlab-r00t'
-      mailNickname: 'gitlab-r00t'
-      members: []
-      roleDefinitionId: '1c0163c0-47e6-4577-8991-ea5c82e286e4'
-    }
-  }
-}
-
 param network = {
   vnet: {
     module: 'MOD-vnet' 
@@ -109,6 +96,19 @@ param network = {
           destinationAddressPrefix: '*'
           access: 'Allow'
           priority: 120
+          direction: 'Inbound'
+        }
+      }
+      {
+        name: 'Allow-GitLab-SSH-2424'
+        properties: {
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          destinationPortRange: '2424'
+          sourceAddressPrefix: '*'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 130
           direction: 'Inbound'
         }
       }

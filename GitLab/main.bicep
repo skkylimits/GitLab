@@ -5,7 +5,6 @@ param location string
 param network object
 param compute object
 param identity object
-param entra object
 
 
 
@@ -48,6 +47,7 @@ module vm './modules/compute/vm.bicep' = {
     vm: compute.vm
     identity: identity
     nicId: nic.outputs.nicId
+    dataDiskName: compute.vm.disks.data[0].name
   }
 }
 

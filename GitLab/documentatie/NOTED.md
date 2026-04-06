@@ -405,3 +405,23 @@ az stack sub create `
 ```
 
 Als je wilt, kan ik je README nog even opschonen tot één strakke `deploy / unlock / delete` sectie zonder dubbelingen.
+
+
+- eerst vpn client. check of app reg ook bestaat
+- daarna gitlab deploy tweedelig. data eerst checken of die bestaan anders maken en daarna deploy gitlab met alles er op en eraan
+- daarna peering. chcked of er geen lockes zijn deny write en doet daarna peering
+
+Nog beter voor de lange termijn is om GitLab verder te splitsen in lifecycles:
+
+netwerk-stack
+VNet
+subnet
+NSG
+peering blijft stabiel
+compute-stack
+VM
+eventueel NIC
+cloud-init/runtime
+data
+DATA-GitLab
+Dat is uiteindelijk de enterprise-manier: netwerk niet opnieuw bouwen als je alleen runtime wilt testen.

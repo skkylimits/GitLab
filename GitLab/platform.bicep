@@ -6,7 +6,6 @@ param rg object
 param network object
 param compute object
 param identity object
-param entra object
 
 // 📦 Resource Group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2022-09-01' = {
@@ -24,6 +23,5 @@ module GitLab './main.bicep' = {
     network: network
     compute: compute
     identity: identity
-    entra: entra
   }
 }

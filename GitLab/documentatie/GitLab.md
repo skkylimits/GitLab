@@ -346,3 +346,10 @@ Disk bestaat niet → create
 VM bestaat al → update/replace
 Cloud-init script mount / Docker container idempotent → safe herdeploys
 Zo kan je altijd de VM afbreken en opnieuw deployen zonder dat GitLab-data verloren gaat.
+
+De praktische uitwerking is nu:
+
+- laat `deploy.ps1` eerst checken of `DATA-GitLab` bestaat en bootstrapt hem anders buiten de app stack
+- zet een `CanNotDelete` lock op die disk
+- laat de GitLab VM alleen een bestaande disk attachen met `deleteOption: 'Detach'`
+- gebruik de app stack daarna alleen voor de disposable compute-laag

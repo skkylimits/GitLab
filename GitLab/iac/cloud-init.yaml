@@ -1,14 +1,86 @@
 #cloud-config
 package_update: true
 package_upgrade: true
+packages:
+  - docker.io
+  - docker-compose
+
+write_files:
+  - path: /usr/local/bin/gitlab-bootstrap.sh
+    permissions: '0755'
+    owner: root:root
+    content: |
+      #!/usr/bin/env bash
+      set -euxo pipefail
+
+      data_disk_device="/dev/sdb"
+      data_partition="/dev/sdb1"
+      mount_point="/mnt/DATA-GitLab"
+      gitlab_root="${mount_point}/gitlab"
+      compose_dir="${gitlab_root}/compose"
+
+      for _ in $(seq 1 30); do
+        if [ -b "${data_disk_device}" ]; then
+          break
+        fi
+        sleep 2
+      done
+
+      if [ ! -b "${data_disk_device}" ]; then
+        echo "GitLab data disk ${data_disk_device} not found"
+        exit 1
+      fi
+
+      if ! lsblk -no NAME "${data_disk_device}" | grep -q '^sdb1$'; then
+        parted "${data_disk_device}" --script mklabel gpt
+        parted "${data_disk_device}" --script mkpart primary ext4 0% 100%
+        partprobe "${data_disk_device}"
+      fi
+
+      if [ -z "$(blkid -s TYPE -o value "${data_partition}" || true)" ]; then
+        mkfs.ext4 -F "${data_partition}"
+      fi
+
+      mkdir -p "${mount_point}"
+
+      uuid="$(blkid -s UUID -o value "${data_partition}")"
+      fstab_entry="UUID=${uuid} ${mount_point} ext4 defaults,nofail 0 2"
+      grep -q "UUID=${uuid} " /etc/fstab || echo "${fstab_entry}" >> /etc/fstab
+
+      mountpoint -q "${mount_point}" || mount "${mount_point}"
+
+      mkdir -p "${gitlab_root}/config" "${gitlab_root}/logs" "${gitlab_root}/data" "${compose_dir}"
+
+      cat > "${compose_dir}/docker-compose.yml" <<'EOF'
+      services:
+        gitlab:
+          image: gitlab/gitlab-ee:latest
+          container_name: gitlab
+          restart: always
+          hostname: 'gitlab.local'
+          environment:
+            GITLAB_OMNIBUS_CONFIG: |
+              external_url 'http://gitlab.local'
+              gitlab_rails['gitlab_shell_ssh_port'] = 2424
+          ports:
+            - '80:80'
+            - '443:443'
+            - '2424:22'
+          volumes:
+            - '/mnt/DATA-GitLab/gitlab/config:/etc/gitlab'
+            - '/mnt/DATA-GitLab/gitlab/logs:/var/log/gitlab'
+            - '/mnt/DATA-GitLab/gitlab/data:/var/opt/gitlab'
+          shm_size: '256m'
+      EOF
+
+      systemctl enable docker
+      systemctl restart docker
+
+      if docker compose version >/dev/null 2>&1; then
+        docker compose -f "${compose_dir}/docker-compose.yml" up -d
+      else
+        docker-compose -f "${compose_dir}/docker-compose.yml" up -d
+      fi
+
 runcmd:
-  # 1. Partitie maken
-  - parted /dev/sdb --script mklabel gpt
-  - parted /dev/sdb --script mkpart primary ext4 0% 100%
-  # 2. Filesystem maken
-  - mkfs.ext4 /dev/sdb1
-  # 3. Mountpoint maken en mounten
-  - mkdir -p /mnt/gitlab_data
-  - mount /dev/sdb1 /mnt/gitlab_data
-  # 4. Automount bij reboot
-  - echo '/dev/sdb1 /mnt/gitlab_data ext4 defaults 0 2' >> /etc/fstab
+  - /usr/local/bin/gitlab-bootstrap.sh

@@ -23,3 +23,5 @@ Deploy volgorde:
 1. Deploy `Azure VPN Client`
 2. Deploy `GitLab`
 3. Deploy `peering`
+
+Met denyWriteAndDelete zet een Deployment Stack een deny assignment op het VNet, waardoor Azure niet alleen deletes maar ook write-acties op dat netwerk blokkeert. VNet peering is zo’n write-operatie en vereist bovendien een linked peer/action op het remote VNet, dus die peering faalde zodra die deny assignment actief was. Zet de stack op `--deny-settings-mode none`

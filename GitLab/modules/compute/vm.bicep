@@ -2,19 +2,12 @@ param location string
 param vm object
 param identity object
 param nicId string
+param dataDiskName string
 
-resource dataDisk 'Microsoft.Compute/disks@2021-12-01' = {
-  name: vm.disks.data[0].name
-  location: location
-  sku: {
-    name: vm.disks.data[0].sku
-  }
-  properties: {
-    creationData: {
-      createOption: 'Empty'
-    }
-    diskSizeGB:  vm.disks.data[0].sizeGB
-  }
+var cloudInit = loadTextContent('../../iac/cloud-init.yaml')
+
+resource dataDisk 'Microsoft.Compute/disks@2023-04-02' existing = {
+  name: dataDiskName
 }
 
 resource VirtualMachine 'Microsoft.Compute/virtualMachines@2022-03-01' = {
@@ -30,6 +23,7 @@ resource VirtualMachine 'Microsoft.Compute/virtualMachines@2022-03-01' = {
     osProfile: {
       computerName: vm.name
       adminUsername: identity.adminUsername
+      customData: base64(cloudInit)
 
       linuxConfiguration: {
         disablePasswordAuthentication: true
@@ -60,13 +54,14 @@ resource VirtualMachine 'Microsoft.Compute/virtualMachines@2022-03-01' = {
       deleteOption: 'Delete' // zo wordt OS-disk ook verwijderd bij stack delete
     }
     dataDisks: [
-  {
-    lun: 0
+      {
+        lun: 0
         createOption: 'Attach'
         managedDisk: {
           id: dataDisk.id
         }
         caching: 'ReadWrite'
+        deleteOption: 'Detach'
       }
     ]
     }

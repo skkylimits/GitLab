@@ -14,6 +14,14 @@ az extension add --name ssh
 
 # Deployment
 
+## Persistent data disk
+
+`deploy.ps1` zorgt nu eerst dat `DATA-GitLab` bestaat en deployt daarna pas de disposable GitLab stack. De disk blijft buiten de deployment stack en wordt alleen aangemaakt als hij nog niet bestaat.
+
+```
+./scripts/deploy.ps1
+```
+
 ```
 az stack sub create `
   --name "gitlab-stack" `
@@ -172,6 +180,7 @@ Afhankelijk van je settings:
 - Datadisk: 128 GB Premium SSD
 - Geen publieke IP (private netwerk + bastion/jumpbox voor beheer)
 - Eenvoudig te updaten met: `az deployment sub create ...` (idempotent)
+- De data disk wordt apart gedeployed met een kleine losse resource-template en met een `CanNotDelete` lock beschermd
 
 ## 2. ResourceGroup + module hiërarchie
 - `bootstrap.bicep` creëert RG.
@@ -221,6 +230,19 @@ Subscription scope (bootstrap.bicep)
 - Wacht tot de delete klaar is; de deny assignment wordt dan ook verwijderd.
 - Deploy daarna opnieuw met `az stack sub create ...`.
 - Wil je alleen locks uitzetten zonder te deleten, run dan opnieuw `az stack sub create ... --deny-settings-mode none`.
+- De 128 GB data disk blijft buiten deze cleanup-flow en wordt opnieuw geattached door de VM deployment.
+
+## 4.6 Data disk ownership
+- `gitlab-stack` beheert de disposable laag: VM, NIC, NSG en VNet.
+- `deploy.ps1` checkt eerst of `DATA-GitLab` bestaat en bootstrapt hem anders via `modules/storage/disk.bicep`.
+- De VM attacht de bestaande disk met `deleteOption: 'Detach'`, zodat VM rebuilds de disk niet opruimen.
+
+## 4.7 Cloud-init runtime
+- cloud-init mount de data disk idempotent via UUID
+- cloud-init installeert Docker en Docker Compose
+- cloud-init schrijft een `docker-compose.yml` naar de data disk
+- GitLab config, logs en data landen onder `/mnt/DATA-GitLab/gitlab`
+- GitLab container SSH gebruikt hostpoort `2424`, zodat VM-beheer-SSH op poort `22` intact blijft
 
 ## 5. Waarom we niet `main.bicep` direct met RG t/m objecten
 - `main.bicep` is clean resourceGroup-scope en herbruikbaar vanuit meerdere RG’'s/branches.
