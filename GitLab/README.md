@@ -231,3 +231,9 @@ az vm list-skus `
   --location westeurope `
   --size Standard_B `
   --output table
+
+
+# TODO
+
+Automatate entra groupen creation + koppeling op de vm RBAC
+pipeline script -> vpn -> gitlab- > peering. vpn voegt azure app reg als die nog niet bestaat en checked. overal checks inbouwen
